@@ -1,0 +1,31 @@
+{
+  "name": "github-api-isomorphic",
+  "version": "0.0.1",
+  "description": "github api for nodejs and browser",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruanyl/github-api-isomorphic.git"
+  },
+  "keywords": [
+    "github",
+    "api"
+  ],
+  "author": "Ruan Yulong <ruanyu1@gmail.com> (http://github.com/ruanyl)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ruanyl/github-api-isomorphic/issues"
+  },
+  "homepage": "https://github.com/ruanyl/github-api-isomorphic#readme",
+  "dependencies": {
+    "js-base64": "^2.1.9",
+    "superagent": "^1.6.1"
+  },
+  "devDependencies": {
+    "ava": "^0.8.0",
+    "dotenv": "^1.2.0"
+  }
+}
