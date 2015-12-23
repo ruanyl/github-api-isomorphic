@@ -33,8 +33,36 @@ module.exports = function(authMiddleware, user, repo) {
       });
   }
 
+  function addCollaborator(username, cb) {
+    request
+      .put(url + '/' + username)
+      .use(authMiddleware())
+      .end(function(err, res) {
+        if(err || !res.ok) {
+          cb(err);
+        } else if(res.status === 204) {
+          cb(null, true);
+        }
+      });
+  }
+
+  function removeCollaborator(username, cb) {
+    request
+      .delete(url + '/' + username)
+      .use(authMiddleware())
+      .end(function(err, res) {
+        if(err || !res.ok) {
+          cb(err);
+        } else if(res.status === 204) {
+          cb(null, true);
+        }
+      });
+  }
+
   return {
     listCollaborators: listCollaborators,
-    isCollaborator: isCollaborator
+    isCollaborator: isCollaborator,
+    addCollaborator: addCollaborator,
+    removeCollaborator: removeCollaborator
   };
 };
