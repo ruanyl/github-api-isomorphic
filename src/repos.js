@@ -18,7 +18,23 @@ module.exports = function(authMiddleware, user, repo) {
       });
   }
 
+  function isCollaborator(username, cb) {
+    request
+      .get(url + '/' + username)
+      .use(authMiddleware())
+      .end(function(err, res) {
+        if(err && err.status === 404) {
+          cb(null, false);
+        } else if(res.status === 204) {
+          cb(null, true);
+        } else {
+          cb(err);
+        }
+      });
+  }
+
   return {
-    listCollaborators: listCollaborators
+    listCollaborators: listCollaborators,
+    isCollaborator: isCollaborator
   };
 };
