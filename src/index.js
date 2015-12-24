@@ -1,4 +1,4 @@
-var _repos = require('./src/repos');
+var _repos = require('./repos');
 var base64 = require('js-base64').Base64;
 
 function Github() {
