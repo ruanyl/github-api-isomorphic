@@ -4,7 +4,7 @@
   "description": "github api for nodejs and browser",
   "main": "lib/index.js",
   "scripts": {
-    "test": "ava",
+    "test": "./node_modules/tape/bin/tape test/**/*.js",
     "build": "./node_modules/babel-cli/bin/babel.js src --out-dir lib",
     "build:watch": "./node_modules/babel-cli/bin/babel.js src --out-dir lib --watch"
   },
