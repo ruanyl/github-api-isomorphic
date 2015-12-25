@@ -5,7 +5,8 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "ava",
-    "build": "./node_modules/babel-cli/bin/babel.js src --out-dir lib"
+    "build": "./node_modules/babel-cli/bin/babel.js src --out-dir lib",
+    "build:watch": "./node_modules/babel-cli/bin/babel.js src --out-dir lib --watch"
   },
   "repository": {
     "type": "git",
