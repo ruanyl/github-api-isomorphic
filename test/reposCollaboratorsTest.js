@@ -6,7 +6,7 @@ var username = process.env.GITHUB_USER;
 var password = process.env.GITHUB_PASS;
 var github = new Github();
 github.basicAuth(username, password);
-var repos = github.repos('ruanyl', 'oupai-dev');
+var repos = github.repos('ruanyl', 'issue-todo');
 
 test('List Collaborators', function(t) {
   repos.listCollaborators(function(err, data) {

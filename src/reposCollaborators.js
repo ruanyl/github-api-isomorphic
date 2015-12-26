@@ -1,12 +1,11 @@
 var request = require('superagent');
-var endpoint = require('./endpoint');
 
-module.exports = function(authMiddleware, user, repo) {
-  var url = endpoint.root + '/repos/' + user + '/' + repo + '/collaborators';
-
+module.exports = function(authMiddleware, url) {
   function listCollaborators(cb) {
+    const _url = `${url}/collaborators`;
+
     request
-      .get(url)
+      .get(_url)
       .use(authMiddleware())
       .end(function(err, res) {
         if(err || !res.ok) {
@@ -18,10 +17,13 @@ module.exports = function(authMiddleware, user, repo) {
   }
 
   function isCollaborator(username, cb) {
+    const _url = `${url}/collaborators/${username}`;
+
     request
-      .get(url + '/' + username)
+      .get(_url)
       .use(authMiddleware())
       .end(function(err, res) {
+        console.log(res.body);
         if(err && err.status === 404) {
           cb(null, false);
         } else if(res.status === 204) {
@@ -34,8 +36,10 @@ module.exports = function(authMiddleware, user, repo) {
 
   // TODO support permission of organization repos
   function addCollaborator(username, cb) {
+    const _url = `${url}/collaborators/${username}`;
+
     request
-      .put(url + '/' + username)
+      .put(_url)
       .use(authMiddleware())
       .end(function(err, res) {
         if(err || !res.ok) {
@@ -47,8 +51,10 @@ module.exports = function(authMiddleware, user, repo) {
   }
 
   function removeCollaborator(username, cb) {
+    const _url = `${url}/collaborators/${username}`;
+
     request
-      .delete(url + '/' + username)
+      .delete(_url)
       .use(authMiddleware())
       .end(function(err, res) {
         if(err || !res.ok) {

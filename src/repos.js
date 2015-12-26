@@ -1,7 +1,12 @@
+var endpoint = require('./endpoint');
+
 module.exports = function(authMiddleware, user, repo) {
-  var reposCollaborators = require('./reposCollaborators')(authMiddleware, user, repo);
+  var url = endpoint.root + '/repos/' + user + '/' + repo;
+  var reposCollaborators = require('./reposCollaborators')(authMiddleware, url);
+  var reposComments = require('./reposComments')(authMiddleware, url);
 
   return {
-    ...reposCollaborators
+    ...reposCollaborators,
+    ...reposComments
   };
 };
