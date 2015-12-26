@@ -23,7 +23,6 @@ module.exports = function(authMiddleware, url) {
       .get(_url)
       .use(authMiddleware())
       .end(function(err, res) {
-        console.log(res.body);
         if(err && err.status === 404) {
           cb(null, false);
         } else if(res.status === 204) {
