@@ -4,7 +4,7 @@
   "description": "github api for nodejs and browser",
   "main": "lib/index.js",
   "scripts": {
-    "test": "./node_modules/tape/bin/tape test/**/*.js",
+    "test": "./node_modules/tape/bin/tape test/**/*.js  | tap-spec",
     "build": "./node_modules/babel-cli/bin/babel.js src --out-dir lib",
     "build:watch": "./node_modules/babel-cli/bin/babel.js src --out-dir lib --watch"
   },
@@ -36,6 +36,7 @@
     "babel-preset-stage-2": "^6.3.13",
     "babel-runtime": "^6.3.19",
     "dotenv": "^1.2.0",
+    "tap-spec": "^4.1.1",
     "tape": "^4.4.0",
     "webpack": "^1.12.9"
   }
