@@ -6,11 +6,13 @@ module.exports = function(authMiddleware, user, repo) {
   var reposComments = require('./reposComments')(authMiddleware, url);
   var reposCommits = require('./reposCommits')(authMiddleware, url);
   var reposDeployKeys = require('./reposDeployKeys')(authMiddleware, url);
+  var reposContents = require('./reposContents')(authMiddleware, url);
 
   return {
     ...reposCollaborators,
     ...reposComments,
     ...reposCommits,
-    ...reposDeployKeys
+    ...reposDeployKeys,
+    ...reposContents
   };
 };
