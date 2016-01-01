@@ -8,6 +8,7 @@ module.exports = function(authMiddleware, user, repo) {
   var reposDeployKeys = require('./reposDeployKeys')(authMiddleware, url);
   var reposContents = require('./reposContents')(authMiddleware, url);
   var reposForks = require('./reposForks')(authMiddleware, url);
+  var reposReleases = require('./reposReleases')(authMiddleware, url);
 
   return {
     ...reposCollaborators,
@@ -15,6 +16,7 @@ module.exports = function(authMiddleware, user, repo) {
     ...reposCommits,
     ...reposDeployKeys,
     ...reposContents,
-    ...reposForks
+    ...reposForks,
+    ...reposReleases
   };
 };
