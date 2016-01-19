@@ -14,7 +14,7 @@ module.exports = function(authMiddleware, url) {
 
     request
       .get(_url)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .query(data)
       .end(function(err, res) {
         if(err || !res.ok) {
@@ -30,7 +30,7 @@ module.exports = function(authMiddleware, url) {
 
     request
       .get(_url)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .end(function(err, res) {
         if(err || !res.ok) {
           cb(err);
@@ -50,7 +50,7 @@ module.exports = function(authMiddleware, url) {
 
     request
       .get(_url)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .end(function(err, res) {
         if(err || !res.ok) {
           cb(err);

@@ -6,13 +6,10 @@ function Github() {
 }
 
 Github.prototype.basicAuth = function(username, password) {
-  this.authMiddleware = function() {
-    var basic = base64.encode(username + ':' + password);
-    return function(req) {
-      req.set('Authorization', 'Basic ' + basic);
-
-      return req;
-    };
+  var basic = base64.encode(username + ':' + password);
+  this.authMiddleware = function(req) {
+    req.set('Authorization', 'Basic ' + basic);
+    return req;
   };
 };
 

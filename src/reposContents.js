@@ -13,7 +13,7 @@ module.exports = function(authMiddleware, url) {
 
     request
       .get(_url)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .query(data)
       .end(function(err, res) {
         if(err || !res.ok) {
@@ -42,7 +42,7 @@ module.exports = function(authMiddleware, url) {
 
     request
       .get(_url)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .query(data)
       .end(function(err, res) {
         if(err || !res.ok) {
@@ -70,7 +70,7 @@ module.exports = function(authMiddleware, url) {
 
     request
       .put(_url)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .send(data)
       .end(function(err, res) {
         if(err || !res.ok) {
@@ -97,7 +97,7 @@ module.exports = function(authMiddleware, url) {
 
     request
       .put(_url)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .send(data)
       .end(function(err, res) {
         if(err || !res.ok) {
@@ -124,7 +124,7 @@ module.exports = function(authMiddleware, url) {
 
     request
       .delete(_url)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .send(data)
       .end(function(err, res) {
         if(err || !res.ok) {
@@ -151,7 +151,7 @@ module.exports = function(authMiddleware, url) {
 
     request
       .get(_url)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .on('redirect', function(res) {
         cb(null, res.headers.location);
       })

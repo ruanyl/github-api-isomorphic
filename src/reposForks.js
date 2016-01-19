@@ -12,7 +12,7 @@ module.exports = function(authMiddleware, url) {
     request
       .get(_url)
       .query(data)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .end(function(err, res) {
         if(err || !res.ok) {
           cb(err);
@@ -33,7 +33,7 @@ module.exports = function(authMiddleware, url) {
     request
       .post(_url)
       .send(data)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .end(function(err, res) {
         if(err || !res.ok) {
           cb(err);

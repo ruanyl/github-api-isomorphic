@@ -6,7 +6,7 @@ module.exports = function(authMiddleware, url) {
 
     request
       .get(_url)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .end(function(err, res) {
         if(err || !res.ok) {
           cb(err);
@@ -21,7 +21,7 @@ module.exports = function(authMiddleware, url) {
 
     request
       .post(_url)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .send(data)
       .end(function(err, res) {
         if(err || !res.ok) {
@@ -37,7 +37,7 @@ module.exports = function(authMiddleware, url) {
 
     request
       .get(_url)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .end(function(err, res) {
         if(err || !res.ok) {
           cb(err);
@@ -52,7 +52,7 @@ module.exports = function(authMiddleware, url) {
 
     request
       .get(_url)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .end(function(err, res) {
         if(err || !res.ok) {
           cb(err);
@@ -67,7 +67,7 @@ module.exports = function(authMiddleware, url) {
 
     request
       .get(_url)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .end(function(err, res) {
         if(err || !res.ok) {
           cb(err);
@@ -82,7 +82,7 @@ module.exports = function(authMiddleware, url) {
 
     request
       .patch(_url)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .send(data)
       .end(function(err, res) {
         if(err || !res.ok) {
@@ -98,7 +98,7 @@ module.exports = function(authMiddleware, url) {
 
     request
       .del(_url)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .end(function(err, res) {
         if(err || !res.ok) {
           cb(err);
@@ -115,7 +115,7 @@ module.exports = function(authMiddleware, url) {
 
     request
       .get(_url)
-      .use(authMiddleware())
+      .use(authMiddleware)
       .end(function(err, res) {
         if(err || !res.ok) {
           cb(err);
