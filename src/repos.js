@@ -9,6 +9,7 @@ module.exports = function(authMiddleware, user, repo) {
   var reposContents = require('./reposContents')(authMiddleware, url);
   var reposForks = require('./reposForks')(authMiddleware, url);
   var reposReleases = require('./reposReleases')(authMiddleware, url);
+  var reposBase = require('./reposBase')(authMiddleware, endpoint.root);
 
   return {
     ...reposCollaborators,
@@ -17,6 +18,7 @@ module.exports = function(authMiddleware, user, repo) {
     ...reposDeployKeys,
     ...reposContents,
     ...reposForks,
-    ...reposReleases
+    ...reposReleases,
+    ...reposBase
   };
 };
