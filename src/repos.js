@@ -1,7 +1,7 @@
-var endpoint = require('./endpoint');
+var helper = require('./helper');
 
 module.exports = function(authMiddleware, user, repo) {
-  var url = endpoint.root + '/repos/' + user + '/' + repo;
+  var url = helper.apiRoot + '/repos/' + user + '/' + repo;
   var reposCollaborators = require('./reposCollaborators')(authMiddleware, url);
   var reposComments = require('./reposComments')(authMiddleware, url);
   var reposCommits = require('./reposCommits')(authMiddleware, url);
@@ -9,7 +9,7 @@ module.exports = function(authMiddleware, user, repo) {
   var reposContents = require('./reposContents')(authMiddleware, url);
   var reposForks = require('./reposForks')(authMiddleware, url);
   var reposReleases = require('./reposReleases')(authMiddleware, url);
-  var reposBase = require('./reposBase')(authMiddleware, endpoint.root);
+  const reposBase = require('./reposBase')(authMiddleware, helper.apiRoot);
 
   return {
     ...reposCollaborators,
@@ -19,6 +19,6 @@ module.exports = function(authMiddleware, user, repo) {
     ...reposContents,
     ...reposForks,
     ...reposReleases,
-    ...reposBase
+    ...reposBase,
   };
 };

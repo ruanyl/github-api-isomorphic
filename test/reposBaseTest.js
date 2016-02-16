@@ -1,26 +1,26 @@
-var Github = require('../lib/index');
-var test = require('tape');
+const Github = require('../lib/index');
+const test = require('tape');
 require('dotenv').load();
 
-var username = process.env.GITHUB_USER;
-var password = process.env.GITHUB_PASS;
-var github = new Github();
+const username = process.env.GITHUB_USER;
+const password = process.env.GITHUB_PASS;
+const github = new Github();
 github.basicAuth(username, password);
-var repos = github.repos('ruanyl', 'issue-todo');
+const repos = github.repos('ruanyl', 'issue-todo');
 
 test('List All My Repos', function(t) {
   t.plan(2);
-  repos.listMyRepos(function(err, data) {
+  repos.listMyRepos().then(function(data) {
     t.equal(Object.prototype.toString.call(data), '[object Array]', 'it should return an array of repos');
     t.ok(data.length > 0, 'it should return at least one repo');
   });
 });
 
 test('List My Private Repos', function(t) {
-  var options = {
+  const options = {
     visibility: 'private'
   };
-  repos.listMyRepos(options, function(err, data) {
+  repos.listMyRepos(options).then(function(data) {
     t.equal(Object.prototype.toString.call(data), '[object Array]', 'it should return an array of repos');
     data.forEach(function(repo) {
       t.ok(repo.private === true, 'it should return provate repo');
@@ -30,11 +30,11 @@ test('List My Private Repos', function(t) {
 });
 
 test('List User Repos', function(t) {
-  var options = {
-    type: 'member'
+  const options = {
+    type: 'member',
   };
-  var repos = github.repos();
-  repos.listUserRepos('gaearon', options, function(err, data) {
+  const repos = github.repos();
+  repos.listUserRepos('gaearon', options).then(function(data) {
     t.equal(Object.prototype.toString.call(data), '[object Array]', 'it should return an array of repos');
     data.forEach(function(repo) {
       t.ok(repo.owner.login !== 'gaearon', 'owner of the repos should be someone other than gaearon');
