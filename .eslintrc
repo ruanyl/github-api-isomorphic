@@ -1,0 +1,15 @@
+{
+  "extends": "ruanyl",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+        "experimentalObjectRestSpread": true,
+        "jsx": true
+    }
+  },
+  "rules": {
+    "no-use-before-define": [2, "nofunc"],
+    "prefer-const": 0,
+    "space-before-function-paren": [2, "never"]
+  }
+}
