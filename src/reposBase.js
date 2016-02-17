@@ -1,18 +1,13 @@
-var fetch = require('isomorphic-fetch');
-var helper = require('./helper');
+let fetch = require('isomorphic-fetch');
+let helper = require('./helper');
 
 module.exports = function(auth, url) {
   let headers = {};
-  if(auth) {
+  if (auth) {
     headers.Authorization = auth;
   }
 
-  function listMyRepos(data) {
-    if(Object.prototype.toString.apply(data) !== '[object Object]') {
-      cb = data;
-      data = {};
-    }
-
+  function listMyRepos(data = {}) {
     const _url = `${url}/user/repos`;
     const query = helper.toQueryString(data);
 
@@ -21,12 +16,7 @@ module.exports = function(auth, url) {
     }).then((res) => res.json());
   }
 
-  function listUserRepos(username, data) {
-    if(Object.prototype.toString.apply(data) !== '[object Object]') {
-      cb = data;
-      data = {};
-    }
-
+  function listUserRepos(username, data = {}) {
     const _url = `${url}/users/${username}/repos`;
     const query = helper.toQueryString(data);
 
