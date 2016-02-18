@@ -2,10 +2,7 @@ let fetch = require('isomorphic-fetch');
 let helper = require('./helper');
 
 module.exports = function(auth, url) {
-  let headers = {};
-  if (auth) {
-    headers.Authorization = auth;
-  }
+  let headers = helper.makeHeader({}, 'Authorization', auth);
 
   function listMyRepos(data = {}) {
     const _url = `${url}/user/repos`;

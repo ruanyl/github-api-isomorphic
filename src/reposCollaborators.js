@@ -1,73 +1,48 @@
-var request = require('superagent');
+let fetch = require('isomorphic-fetch');
+let helper = require('./helper');
 
-module.exports = function(authMiddleware, url) {
-  function listCollaborators(cb) {
+module.exports = function(auth, url) {
+  let headers = helper.makeHeader({}, 'Authorization', auth);
+
+  function listCollaborators() {
     const _url = `${url}/collaborators`;
 
-    request
-      .get(_url)
-      .use(authMiddleware)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else {
-          cb(null, res.body);
-        }
-      });
+    return fetch(_url, {
+      headers,
+    }).then((res) => res.json());
   }
 
-  function isCollaborator(username, cb) {
+  function isCollaborator(username) {
     const _url = `${url}/collaborators/${username}`;
 
-    request
-      .get(_url)
-      .use(authMiddleware)
-      .end(function(err, res) {
-        if(err && err.status === 404) {
-          cb(null, false);
-        } else if(res.status === 204) {
-          cb(null, true);
-        } else {
-          cb(err);
-        }
-      });
+    return fetch(_url, {
+      headers,
+    }).then((res) => res.status === 204);
   }
 
   // TODO support permission of organization repos
-  function addCollaborator(username, cb) {
+  function addCollaborator(username) {
     const _url = `${url}/collaborators/${username}`;
 
-    request
-      .put(_url)
-      .use(authMiddleware)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else if(res.status === 204) {
-          cb(null, true);
-        }
-      });
+    return fetch(_url, {
+      method: 'PUT',
+      headers,
+    }).then((res) => res.status === 204);
   }
 
-  function removeCollaborator(username, cb) {
+  function removeCollaborator(username) {
     const _url = `${url}/collaborators/${username}`;
 
-    request
-      .delete(_url)
-      .use(authMiddleware)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else if(res.status === 204) {
-          cb(null, true);
-        }
-      });
+    return fetch(_url, {
+      method: 'DELETE',
+      headers,
+    }).then((res) => res.status === 204);
   }
 
   return {
-    listCollaborators: listCollaborators,
-    isCollaborator: isCollaborator,
-    addCollaborator: addCollaborator,
-    removeCollaborator: removeCollaborator
+    listCollaborators,
+    isCollaborator,
+    addCollaborator,
+    removeCollaborator,
   };
 };
