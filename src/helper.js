@@ -9,7 +9,17 @@ function toQueryString(queryObj) {
   return queryString;
 }
 
+function makeHeader(headers, key, value) {
+  let newHeaders = Object.assign({}, headers);
+  if (value !== null) {
+    newHeaders[key] = value;
+  }
+
+  return newHeaders;
+}
+
 module.exports = {
   apiRoot,
   toQueryString,
+  makeHeader,
 };
