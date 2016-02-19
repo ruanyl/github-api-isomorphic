@@ -1,4 +1,4 @@
-var apiRoot = 'https://api.github.com';
+let apiRoot = 'https://api.github.com';
 
 function toQueryString(queryObj) {
   let queryString = '';

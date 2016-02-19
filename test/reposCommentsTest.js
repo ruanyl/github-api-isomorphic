@@ -1,5 +1,7 @@
 var Github = require('../lib/index');
-var test = require('tape');
+var tape = require('tape');
+var _test = require('tape-promise');
+var test = _test(tape);
 require('dotenv').load();
 
 var username = process.env.GITHUB_USER;
@@ -9,44 +11,46 @@ github.basicAuth(username, password);
 var repos = github.repos('ruanyl', 'issue-todo');
 
 test('Add Comment', function(t) {
-  t.plan(1);
   var comment = {
     body: 'test comment'
   };
-  repos.createComment('79b30be', comment, function(err, data) {
+  return repos.createComment('79b30be', comment).then(function(data) {
     t.equal(Object.prototype.toString.call(data), '[object Object]', 'it should return the comment object when creating a comment');
   });
 });
 
-test('List Comments', function(t) {
-  t.plan(2);
-  repos.listComments('master', function(err, data) {
+test('List Comments branch', function(t) {
+  return repos.listComments('master').then(function(data) {
     t.equal(Object.prototype.toString.call(data), '[object Array]', 'master branch return data should be an array');
   });
+});
 
-  repos.listComments(function(err, data) {
+test('List Comments all', function(t) {
+  return repos.listComments().then(function(data) {
     t.equal(Object.prototype.toString.call(data), '[object Array]', 'return data should be an array');
   });
 });
 
 test('Get Comment', function(t) {
-  t.plan(2);
-  repos.listComments(function(err, data) {
-    repos.getComment(data[0]['id'], function(err, data) {
+  return repos.listComments().then(function(data) {
+    return repos.getComment(data[0]['id'], function(data) {
       t.equal(Object.prototype.toString.call(data), '[object Object]', 'it should return a comment object when get comment by id');
     });
+  });
+});
 
-    repos.updateComment(data[0]['id'], {body: 'update test comment'}, function(err, data) {
+test('Update Comment', function(t) {
+  return repos.listComments().then(function(data) {
+    return repos.updateComment(data[0]['id'], {body: 'update test comment'}).then(function(data) {
       t.equal(Object.prototype.toString.call(data), '[object Object]', 'it should return a comment object when update comment by id');
     });
   });
 });
 
 test('Delete Comment', function(t) {
-  t.plan(1);
-  repos.listComments('master', function(err, data) {
-    repos.deleteComment(data[0]['id'], function(err, ret) {
+  return repos.listComments().then(function(data) {
+    return repos.deleteComment(data[0]['id']).then(function(ret) {
       t.ok(ret, 'delete a comment should return true');
     });
-  });
+  })
 });

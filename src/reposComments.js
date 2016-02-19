@@ -1,89 +1,52 @@
-var request = require('superagent');
+let fetch = require('isomorphic-fetch');
+let helper = require('./helper');
 
-module.exports = function(authMiddleware, url) {
-  function listComments(ref, cb) {
-    let _url = '';
-    if(Object.prototype.toString.apply(ref) !== '[object Function]') {
-      _url = `${url}/commits/${ref}/comments`;
-    } else {
-      _url = `${url}/comments`;
-      cb = ref;
-    }
+module.exports = function(auth, url) {
+  let headers = helper.makeHeader({}, 'Authorization', auth);
 
-    request
-      .get(_url)
-      .use(authMiddleware)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else {
-          cb(null, res.body);
-        }
-      });
+  function listComments(ref) {
+    let _url = ref ? `${url}/commits/${ref}/comments` : `${url}/comments`;
+
+    return fetch(_url, {
+      headers,
+    }).then((res) => res.json());
   }
 
-  function createComment(sha, data, cb) {
+  function createComment(sha, data = {}) {
     const _url = `${url}/commits/${sha}/comments`;
 
-    request
-      .post(_url)
-      .use(authMiddleware)
-      .send(data)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else {
-          cb(null, res.body);
-        }
-      });
+    return fetch(_url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(data),
+    }).then((res) => res.json());
   }
 
-  function getComment(id, cb) {
+  function getComment(id) {
     const _url = `${url}/comments/${id}`;
 
-    request
-      .get(_url)
-      .use(authMiddleware)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else {
-          cb(null, res.body);
-        }
-      });
+    return fetch(_url, {
+      headers,
+    }).then((res) => res.json());
   }
 
-  function updateComment(id, data, cb) {
+  function updateComment(id, data) {
     const _url = `${url}/comments/${id}`;
 
-    request
-      .patch(_url)
-      .use(authMiddleware)
-      .send(data)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else {
-          cb(null, res.body);
-        }
-      });
+    return fetch(_url, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify(data),
+    }).then((res) => res.json());
   }
 
-  function deleteComment(id, cb) {
+  function deleteComment(id) {
     const _url = `${url}/comments/${id}`;
 
-    request
-      .del(_url)
-      .use(authMiddleware)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else if(res.status === 204) {
-          cb(null, true);
-        } else {
-          cb(null, false);
-        }
-      });
+    return fetch(_url, {
+      method: 'DELETE',
+      headers,
+    }).then((res) => res.status === 204);
   }
 
   return {
@@ -91,6 +54,6 @@ module.exports = function(authMiddleware, url) {
     createComment,
     getComment,
     updateComment,
-    deleteComment
+    deleteComment,
   };
 };
