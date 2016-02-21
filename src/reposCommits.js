@@ -1,43 +1,26 @@
-var request = require('superagent');
+let fetch = require('isomorphic-fetch');
+let helper = require('./helper');
 
-module.exports = function(authMiddleware, url) {
+module.exports = function(auth, url) {
+  let headers = helper.makeHeader({}, 'Authorization', auth);
   /**
    * Details: https://developer.github.com/v3/repos/commits/#list-commits-on-a-repository
    */
-  function listCommits(data, cb) {
+  function listCommits(data = {}) {
     const _url = `${url}/commits`;
+    const query = helper.toQueryString(data);
 
-    if(Object.prototype.toString.apply(data) !== '[object Object]') {
-      cb = data;
-      data = {};
-    }
-
-    request
-      .get(_url)
-      .use(authMiddleware)
-      .query(data)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else {
-          cb(null, res.body);
-        }
-      });
+    return fetch(`${_url}?${query}`, {
+      headers,
+    }).then((res) => res.json());
   }
 
-  function getCommit(sha, cb) {
+  function getCommit(sha) {
     const _url = `${url}/commits/${sha}`;
 
-    request
-      .get(_url)
-      .use(authMiddleware)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else {
-          cb(null, res.body);
-        }
-      });
+    return fetch(_url, {
+      headers,
+    }).then((res) => res.json());
   }
 
   /**
@@ -45,24 +28,17 @@ module.exports = function(authMiddleware, url) {
    * TODO: support media type
    * https://developer.github.com/v3/media/#commits-commit-comparison-and-pull-requests
    */
-  function compareCommits(base, head, cb) {
+  function compareCommits(base, head) {
     const _url = `${url}/compare/${base}...${head}`;
 
-    request
-      .get(_url)
-      .use(authMiddleware)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else {
-          cb(null, res.body);
-        }
-      });
+    return fetch(_url, {
+      headers,
+    }).then((res) => res.json());
   }
 
   return {
-    listCommits: listCommits,
-    getCommit: getCommit,
-    compareCommits: compareCommits
+    listCommits,
+    getCommit,
+    compareCommits,
   };
 };
