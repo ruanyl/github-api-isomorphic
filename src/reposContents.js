@@ -1,165 +1,68 @@
-var request = require('superagent');
+let fetch = require('isomorphic-fetch');
+let helper = require('./helper');
 
-module.exports = function(authMiddleware, url) {
+module.exports = function(auth, url) {
+  let headers = helper.makeHeader({}, 'Authorization', auth);
+
   // Details: https://developer.github.com/v3/repos/contents/#get-the-readme
   // Needs to support media types
-  function getReadme(data, cb) {
+  function getReadme(data = {}) {
     const _url = `${url}/readme`;
+    const query = helper.toQueryString(data);
 
-    if(Object.prototype.toString.apply(data) !== '[object Object]') {
-      cb = data;
-      data = {};
-    }
-
-    request
-      .get(_url)
-      .use(authMiddleware)
-      .query(data)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else {
-          cb(null, res.body);
-        }
-      });
+    return fetch(`${_url}?${query}`, {
+      headers,
+    }).then((res) => res.json());
   }
 
   // Deails: https://developer.github.com/v3/repos/contents/#get-contents
   // Needs to support media types
-  function getContents(path, data, cb) {
-    if(Object.prototype.toString.apply(path) !== '[object String]') {
-      cb = data;
-      data = path;
-      path = '';
-    }
-
-    if(Object.prototype.toString.apply(data) !== '[object Object]') {
-      cb = data;
-      data = {};
-    }
-
+  function getContents(path = '', data = {}) {
     const _url = `${url}/contents/${path}`;
+    const query = helper.toQueryString(data);
 
-    request
-      .get(_url)
-      .use(authMiddleware)
-      .query(data)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else {
-          cb(null, res.body);
-        }
-      });
+    return fetch(`${_url}?${query}`, {
+      headers,
+    }).then((res) => res.json());
   }
 
   // Deails: https://developer.github.com/v3/repos/contents/#create-a-file
-  function createFile(path, data, cb) {
-    if(Object.prototype.toString.apply(path) !== '[object String]') {
-      cb = data;
-      data = path;
-      path = '';
-    }
-
-    if(Object.prototype.toString.apply(data) !== '[object Object]') {
-      cb = data;
-      data = {};
-    }
-
+  function createFile(path = '', data = {}) {
     const _url = `${url}/contents/${path}`;
 
-    request
-      .put(_url)
-      .use(authMiddleware)
-      .send(data)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else {
-          cb(null, res.body);
-        }
-      });
+    return fetch(_url, {
+      headers,
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }).then((res) => res.json());
   }
 
-  function updateFile(path, data, cb) {
-    if(Object.prototype.toString.apply(path) !== '[object String]') {
-      cb = data;
-      data = path;
-      path = '';
-    }
-
-    if(Object.prototype.toString.apply(data) !== '[object Object]') {
-      cb = data;
-      data = {};
-    }
-
+  function updateFile(path = '', data = {}) {
     const _url = `${url}/contents/${path}`;
 
-    request
-      .put(_url)
-      .use(authMiddleware)
-      .send(data)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else {
-          cb(null, res.body);
-        }
-      });
+    return fetch(_url, {
+      headers,
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }).then((res) => res.json());
   }
 
-  function deleteFile(path, data, cb) {
-    if(Object.prototype.toString.apply(path) !== '[object String]') {
-      cb = data;
-      data = path;
-      path = '';
-    }
-
-    if(Object.prototype.toString.apply(data) !== '[object Object]') {
-      cb = data;
-      data = {};
-    }
-
+  function deleteFile(path = '', data = {}) {
     const _url = `${url}/contents/${path}`;
 
-    request
-      .delete(_url)
-      .use(authMiddleware)
-      .send(data)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else {
-          cb(null, res.body);
-        }
-      });
+    return fetch(_url, {
+      headers,
+      method: 'DELETE',
+      body: JSON.stringify(data),
+    }).then((res) => res.json());
   }
 
-  function getArchiveLink(archiveFormat, ref, cb) {
-    if(Object.prototype.toString.apply(archiveFormat) !== '[object String]') {
-      cb = ref;
-      ref = archiveFormat;
-      archiveFormat = 'tarball';
-    }
-
-    if(Object.prototype.toString.apply(ref) !== '[object String]') {
-      cb = ref;
-      ref = 'master';
-    }
-
+  function getArchiveLink(archiveFormat = 'tarball', ref = 'master') {
     const _url = `${url}/${archiveFormat}/${ref}`;
 
-    request
-      .get(_url)
-      .use(authMiddleware)
-      .on('redirect', function(res) {
-        cb(null, res.headers.location);
-      })
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        }
-      });
+    return fetch(_url, {
+      headers,
+    }).then((res) => res.url);
   }
 
   return {
@@ -168,6 +71,6 @@ module.exports = function(authMiddleware, url) {
     createFile,
     updateFile,
     deleteFile,
-    getArchiveLink
+    getArchiveLink,
   };
 };

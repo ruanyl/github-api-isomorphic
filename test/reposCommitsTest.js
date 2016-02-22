@@ -14,14 +14,6 @@ test('List Commits', function(t) {
   return repos.listCommits().then(function(data) {
     t.equal(Object.prototype.toString.call(data), '[object Array]', 'it should return an array of commits');
   });
-
-  var commit = {
-    sha: '6e3e7b09480c4cf0e877ab44bc5f6943bef1894d'
-  };
-  repos.listCommits(commit, function(err, data) {
-    t.equal(Object.prototype.toString.call(data),
-            '[object Array]', 'it should return an array of commits after a commit sha');
-  });
 });
 
 test('List Commits by hash', function(t) {

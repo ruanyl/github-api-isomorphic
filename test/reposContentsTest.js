@@ -1,5 +1,7 @@
 var Github = require('../lib/index');
-var test = require('tape');
+var tape = require('tape');
+var _test = require('tape-promise');
+var test = _test(tape);
 var base64 = require('js-base64').Base64;
 require('dotenv').load();
 
@@ -10,95 +12,95 @@ github.basicAuth(username, password);
 var repos = github.repos('ruanyl', 'issue-todo');
 
 test('Get Readme', function(t) {
-  t.plan(3);
-  repos.getReadme(function(err, data) {
-    t.equal(Object.prototype.toString.call(data), '[object Object]', 'it should return an object of the readme details');
+  return repos.getReadme().then(function(data) {
+    t.equal(data.type, 'file', 'type of readme should be a file');
   });
+});
 
-  repos.getReadme({ref: '6e3e7b09480c4cf0e877ab44bc5f6943bef1894d'}, function(err, data) {
-    t.equal(Object.prototype.toString.call(data),
-            '[object Object]', 'it should return an object of the readme details of a specified commit');
+test('Get Readme by hash', function(t) {
+  return repos.getReadme({ref: '6e3e7b09480c4cf0e877ab44bc5f6943bef1894d'}).then(function(data) {
+    t.equal(data.type, 'file', 'type of readme should be a file');
   });
+});
 
-  repos.getReadme({ref: 'master'}, function(err, data) {
-    t.equal(Object.prototype.toString.call(data),
-            '[object Object]', 'it should return an object of the readme details of a specified branch');
+test('Get Readme by ref', function(t) {
+  return repos.getReadme({ref: 'master'}).then(function(data) {
+    t.equal(data.type, 'file', 'type of readme should be a file');
   });
 });
 
 test('Get Contents', function(t) {
-  t.plan(5);
-
-  repos.getContents(function(err, data) {
-    t.ok(['[object Object]', '[object Array]'].indexOf(Object.prototype.toString.call(data)) >= 0,
-         'it should return an object or an array of files');
+  return repos.getContents().then(function(data) {
+    t.ok(data.length >= 0, 'it should return a list of files');
   });
+});
 
-  repos.getContents({ref: 'master'}, function(err, data) {
-    t.ok(['[object Object]', '[object Array]'].indexOf(Object.prototype.toString.call(data)) >= 0,
-          'it should return an object or an array of files of a specified ref');
+test('Get Contents by ref', function(t) {
+  return repos.getContents('/', {ref: 'master'}).then(function(data) {
+    t.ok(data.length >= 0, 'it should return a list of files');
   });
+});
 
-  repos.getContents('README.md', function(err, data) {
-    t.equal(Object.prototype.toString.call(data), '[object Object]',
-            'it should return an object content for an specified filename');
+test('Get Contents by file name', function(t) {
+  return repos.getContents('README.md').then(function(data) {
+    t.equal(data.name, 'README.md', 'it should return the same filename');
   });
+});
 
-  repos.getContents('actions', function(err, data) {
+test('Get Contents of folder', function(t) {
+  return repos.getContents('actions').then(function(data) {
     t.equal(Object.prototype.toString.call(data), '[object Array]',
             'it should return an array of contents for an specified path');
   });
+});
 
-  repos.getContents('README.md', {ref: 'master'}, function(err, data) {
-    t.ok(['[object Object]', '[object Array]'].indexOf(Object.prototype.toString.call(data)) >= 0,
-         'it should return an object or an array of files for a specified filename and ref');
+test('Get Contents by name from a specific ref', function(t) {
+  return repos.getContents('README.md', {ref: 'master'}).then(function(data) {
+    t.ok(data.html_url.indexOf('master') > 0, 'it should return the file of the master branch');
+    t.equal(data.name, 'README.md', 'it should return the same filename as specified');
   });
 });
 
 test('Create a File', function(t) {
-  t.plan(3);
-
-  repos.createFile('test.md', {
-    message: 'test',
+  return repos.createFile('test.md', {
+    message: 'test add file',
     content: base64.encode('test content')
-  }, function(err, data) {
-    t.equal(Object.prototype.toString.call(data), '[object Object]',
-            'it should return an object of commits information if file created successfully');
+  }).then(function(data) {
+    t.equal(data.content.name, 'test.md', 'it should create a file named test.md');
+  });
+});
 
-    repos.updateFile('test.md', {
-      message: 'test update',
+test('Update a File', function(t) {
+  return repos.getContents('test.md').then(function(data) {
+    return repos.updateFile('test.md', {
+      message: 'test update file',
       content: base64.encode('test update content'),
-      sha: data.content.sha
-    }, function(err, data) {
-      t.equal(Object.prototype.toString.call(data), '[object Object]',
-              'it should return an object of commits information if file updated successfully');
-
-      repos.deleteFile('test.md', {
-        message: 'test update',
-        sha: data.content.sha
-      }, function(err, data) {
-        t.equal(Object.prototype.toString.call(data), '[object Object]',
-                'it should return an object of commits information if file updated successfully');
-      });
+      sha: data.sha
+    }).then(function(data) {
+      t.equal(data.content.name, 'test.md', 'it should update a file named test.md');
     });
   });
+});
 
+test('Delete a File', function(t) {
+  return repos.getContents('test.md').then(function(data) {
+    return repos.deleteFile('test.md', {
+      message: 'test delete file',
+      sha: data.sha
+    }).then(function(data) {
+      t.equal(data.content, null, 'it should delete a file named test.md');
+    });
+  });
 });
 
 test('Get Archive Link', function(t) {
-  t.plan(5);
-
-  repos.getArchiveLink(function(err, data) {
-    t.ok(Object.prototype.toString.call(data) === '[object String]', 'it should return the archive link');
+  return repos.getArchiveLink().then(function(data) {
+    t.ok(data.indexOf('.tar.gz') > 0, 'it should return the .tar.gz format archive link by default');
   });
+});
 
-  repos.getArchiveLink('zipball', function(err, data) {
-    t.ok(Object.prototype.toString.call(data) === '[object String]', 'it should return the archive link');
+test('Get Archive Link in zip format', function(t) {
+  return repos.getArchiveLink('zipball').then(function(data) {
     t.ok(data.indexOf('.zip') > 0, 'it should return the .zip format archive link');
-  });
-
-  repos.getArchiveLink('zipball', 'test', function(err, data) {
-    t.ok(Object.prototype.toString.call(data) === '[object String]', 'it should return the archive link');
-    t.ok(data.indexOf('test?') > 0, 'it should return the archive link of a specified branch');
   });
 });
