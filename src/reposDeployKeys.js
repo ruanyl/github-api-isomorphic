@@ -1,74 +1,50 @@
-var request = require('superagent');
+let fetch = require('isomorphic-fetch');
+let helper = require('./helper');
 
-module.exports = function(authMiddleware, url) {
-  function listDeployKeys(cb) {
+module.exports = function(auth, url) {
+  let headers = helper.makeHeader({}, 'Authorization', auth);
+
+  function listDeployKeys() {
     const _url = `${url}/keys`;
 
-    request
-      .get(_url)
-      .use(authMiddleware)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else {
-          cb(null, res.body);
-        }
-      });
+    return fetch(_url, {
+      headers,
+    }).then((res) => res.json());
   }
 
-  function getDeployKey(id, cb) {
+  function getDeployKey(id) {
     const _url = `${url}/keys/${id}`;
 
-    request
-      .get(_url)
-      .use(authMiddleware)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else {
-          cb(null, res.body);
-        }
-      });
+    return fetch(_url, {
+      headers,
+    }).then((res) => res.json());
   }
 
   // Details: https://developer.github.com/v3/repos/keys/#add-a-new-deploy-key
-  function addDeployKey(data, cb) {
+  // Success: Status 201
+  function addDeployKey(data) {
     const _url = `${url}/keys`;
 
-    request
-      .post(_url)
-      .use(authMiddleware)
-      .send(data)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else {
-          cb(null, res.body);
-        }
-      });
+    return fetch(_url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(data),
+    }).then((res) => res.json());
   }
 
-  function removeDeployKey(id, cb) {
+  function removeDeployKey(id) {
     const _url = `${url}/keys/${id}`;
 
-    request
-      .del(_url)
-      .use(authMiddleware)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else if(res.status === 204) {
-          cb(null, true);
-        } else {
-          cb(null, false);
-        }
-      });
+    return fetch(_url, {
+      method: 'DELETE',
+      headers,
+    }).then((res) => res.status === 204);
   }
 
   return {
     listDeployKeys,
     getDeployKey,
     addDeployKey,
-    removeDeployKey
+    removeDeployKey,
   };
 };
