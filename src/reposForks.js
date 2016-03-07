@@ -1,50 +1,30 @@
-var request = require('superagent');
+let fetch = require('isomorphic-fetch');
+let helper = require('./helper');
 
-module.exports = function(authMiddleware, url) {
-  function listForks(data, cb) {
+module.exports = function(auth, url) {
+  let headers = helper.makeHeader({}, 'Authorization', auth);
+
+  function listForks(data = {}) {
     const _url = `${url}/forks`;
+    const query = helper.toQueryString(data);
 
-    if(Object.prototype.toString.apply(data) !== '[object Object]') {
-      cb = data;
-      data = {};
-    }
-
-    request
-      .get(_url)
-      .query(data)
-      .use(authMiddleware)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else {
-          cb(null, res.body);
-        }
-      });
+    return fetch(`${_url}?${query}`, {
+      headers,
+    }).then((res) => res.json());
   }
 
-  function createForks(data, cb) {
+  function createForks(data = {}) {
     const _url = `${url}/forks`;
 
-    if(Object.prototype.toString.apply(data) !== '[object Object]') {
-      cb = data;
-      data = {};
-    }
-
-    request
-      .post(_url)
-      .send(data)
-      .use(authMiddleware)
-      .end(function(err, res) {
-        if(err || !res.ok) {
-          cb(err);
-        } else {
-          cb(null, res.body);
-        }
-      });
+    return fetch(_url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(data),
+    }).then((res) => res.json());
   }
 
   return {
     listForks,
-    createForks
+    createForks,
   };
 };
